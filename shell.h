@@ -36,6 +36,7 @@
 
 extern char **environ;
 
+
 /**
 * struct liststr - singly linked list
 * @num: the number field
@@ -87,6 +88,7 @@ list_t *alias;
 char **environ;
 int env_changed;
 int status;
+
 char **cmd_buf; /* pointer to cmd ; chain buffer, for memory mangement */
 int cmd_buf_type; /* CMD_type ||, &&, ; */
 int readfd;
@@ -229,5 +231,4 @@ void check_chain(info_t *, char *, size_t *, size_t, size_t);
 int replace_alias(info_t *);
 int replace_vars(info_t *);
 int replace_string(char **, char *);
-
 #endif
