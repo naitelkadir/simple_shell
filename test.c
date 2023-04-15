@@ -23,7 +23,7 @@ char *read_line(void)
 	return (line);
 }
 /*----------------------------------------*/
-#define LSH_DELIM "\t\n"
+#define LSH_DELIM "\t\r\n\a"
 char **split_line(char *line)
 {
 	int bufsize = 64;
@@ -39,7 +39,7 @@ char **split_line(char *line)
 	token = strtok(line, LSH_DELIM);
 	while (token != NULL)
 	{
-		tokens[n] = token;
+		tokens[n] = strdup(token);
 		n++;
 		if (n >= bufsize)
 		{
@@ -53,8 +53,37 @@ char **split_line(char *line)
 		}
 		token = strtok(NULL,LSH_DELIM);
 	}
-	tokens[n] = NULL;
+	tokens[n] = token;
 	return (tokens);
+}
+/*-----------------------------------------------------------*/
+char *builtin_str[] = {"cd", "exit"};
+int lsh_cd(char ** args);
+int lsh_exit();
+
+int (*builtin_func[]) (char **) = {&lsh_cd, &lsh_exit};
+int lsh_cd(char ** args)
+{
+	if (args[1] == NULL)
+	{
+		chdir(getenv("HOME"));
+	}
+	else
+	{
+		if (chdir(args[1]) == -1)
+		{
+			printf(" %s: no such directory\n", args[1]);
+		}
+		if (chdir(args[1]) == 0)
+		{
+			chdir(getenv(args[1]));
+		}
+	}
+	return (1);
+}
+int lsh_exit()
+{
+  return 0;
 }
 /*-----------------------------------------------------------*/
 
@@ -62,11 +91,18 @@ int lsh_launch(char **args)
 {
 	pid_t pid , ppid;
 	int status;
-	
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (strcmp(args[0], builtin_str[i]) == 0)
+		{
+			return (*builtin_func[i])(args);
+		}
+	}
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execve(args[0], args, NULL) == -1)
+		if (execvp(args[0], args) == -1)
 		{
 			perror("lsh");
 		}
@@ -80,25 +116,17 @@ int lsh_launch(char **args)
 	{
 		do {
 			ppid = waitpid(pid, &status, WUNTRACED | WCONTINUED);
-            		if (ppid == -1)
+			if (ppid == -1)
 			{
                 		perror("waitpid");
                 		exit(EXIT_FAILURE);
-            		}
+			}
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 	return (1);
 }
 
 /*-----------------------------------------------------------*/
-int lsh_execute(char **args)
-{
-	if (args[0] == NULL)
-	{
-		return (1);
-	}
-	return (lsh_launch(args));
-}
 
 /*-------------------------------------------------------------*/
 void lsh_loop(void)
@@ -110,7 +138,7 @@ void lsh_loop(void)
 		printf("My shell > ");
 		line = read_line();
 		args = split_line(line);
-		status = lsh_execute(args);
+		status = lsh_launch(args);
 		free(line);
 		free(args);
 	} while (status);
