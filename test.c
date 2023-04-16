@@ -23,10 +23,11 @@ char *read_line(void)
 	return (line);
 }
 /*----------------------------------------*/
-#define LSH_DELIM "\t\r\n\a"
+
 char **split_line(char *line)
 {
 	int bufsize = 64;
+	char *delim = " \n";
 	int n = 0;
 	char **tokens = malloc(bufsize * sizeof(char*));
 	char *token;
@@ -36,7 +37,7 @@ char **split_line(char *line)
 		fprintf(stderr, "lsh: allocation error\n");
 		exit(EXIT_FAILURE);
 	}
-	token = strtok(line, LSH_DELIM);
+	token = strtok(line, delim);
 	while (token != NULL)
 	{
 		tokens[n] = strdup(token);
@@ -51,7 +52,7 @@ char **split_line(char *line)
 				exit(EXIT_FAILURE);
 			}
 		}
-		token = strtok(NULL,LSH_DELIM);
+		token = strtok(NULL, delim);
 	}
 	tokens[n] = token;
 	return (tokens);
@@ -91,10 +92,12 @@ int lsh_launch(char **args)
 {
 	pid_t pid , ppid;
 	int status;
+	
+	int i;
 
-	for (int i = 0; i < 2; i++)
+	for (i = 0; i < 2; i++)
 	{
-		if (strcmp(args[0], builtin_str[i]) == 0)
+		if (strcmp(args[1], builtin_str[i]) == 0)
 		{
 			return (*builtin_func[i])(args);
 		}
@@ -102,8 +105,8 @@ int lsh_launch(char **args)
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execvp(args[0], args) == -1)
-		{
+		if (execve(args[0], args, NULL) == -1)
+	{
 			perror("lsh");
 		}
 		exit(EXIT_FAILURE);
@@ -139,9 +142,9 @@ void lsh_loop(void)
 		line = read_line();
 		args = split_line(line);
 		status = lsh_launch(args);
-		free(line);
-		free(args);
 	} while (status);
+	free(line);
+        free(args);
 }
 
 /*---------------------------------------------------------------*/

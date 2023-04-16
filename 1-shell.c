@@ -4,121 +4,73 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-char *read_line(void)
-{
-	char *line = NULL;
-	size_t len = 0;
-	if (getline(&line, &len, stdin) == -1)
-	{
-		if (feof(stdin))
-		{
-			exit(EXIT_SUCCESS);
-		}
-		else
-		{
-			perror("readline");
-			exit(EXIT_FAILURE);
-		}
-	}
-	return (line);
-}
-/*----------------------------------------*/
-#define LSH_DELIM "\t\n"
-char **split_line(char *line)
-{
-	int bufsize = 64;
-	int n = 0;
-	char **tokens = malloc(bufsize * sizeof(char*));
-	char *token;
 
-	if (!tokens)
-	{
-		fprintf(stderr, "lsh: allocation error\n");
-		exit(EXIT_FAILURE);
-	}
-	token = strtok(line, LSH_DELIM);
-	while (token != NULL)
-	{
-		tokens[n] = token;
-		n++;
-		if (n >= bufsize)
-		{
-			bufsize+= 64;
-			tokens = realloc(tokens, bufsize * sizeof(char*));
-			if (!tokens)
-			{
-				fprintf(stderr, "lsh: allocation error\n");
-				exit(EXIT_FAILURE);
-			}
-		}
-		token = strtok(NULL,LSH_DELIM);
-	}
-	tokens[n] = NULL;
-	return (tokens);
-}
-/*-----------------------------------------------------------*/
-
-int lsh_launch(char **args)
+void execute(char **args)
 {
-	pid_t pid , ppid;
-	int status;
-	
-	pid = fork();
-	if (pid == 0)
+	if (args)
 	{
 		if (execve(args[0], args, NULL) == -1)
 		{
-			perror("lsh");
+			perror("Error :");
 		}
-		exit(EXIT_FAILURE);
 	}
-	else if (pid < 0)
+}
+
+int main (int argc, char *args[])
+{
+	char *line = NULL;
+	char *line_copy = NULL;
+	char *delim = " \n";
+	size_t len = 0;
+	ssize_t read;
+	int n = 0;
+	char *token;
+	int i;
+	
+	(void)argc;
+	while (1)
 	{
-		perror("lsh");
-	}
-	else if (pid > 0)
-	{
-		do {
-			ppid = waitpid(pid, &status, WUNTRACED | WCONTINUED);
-            		if (ppid == -1)
+		printf("#cisfun$");
+		read = getline(&line, &len, stdin);
+		if (read == -1)
+		{
+			if (feof(stdin))
 			{
-                		perror("waitpid");
-                		exit(EXIT_FAILURE);
-            		}
-		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+				exit(EXIT_SUCCESS);
+			}
+			else
+			{
+				perror("readline");
+				exit(EXIT_FAILURE);
+			}
+			return (-1);
+		}
+		line_copy = malloc(sizeof(char) * read);
+		if (line_copy == NULL)
+		{
+			perror("lsh: memeory allocation error \n");
+			return (-1);
+		}
+		strcpy(line_copy, line);
+		token = strtok(line, delim);
+		while (token != NULL)
+		{
+			n++;
+			token = strtok(NULL, delim);
+		}
+		n++;
+		args = malloc(sizeof(char *) * n);
+		token = strtok(line_copy, delim);
+		for (i = 0; token != NULL; i++)
+		{
+			args[i] = malloc(sizeof(char) * strlen(token));
+			strcpy(args[i], token);
+			token = strtok(NULL, delim);
+		}
+		args[i] = NULL;
+		execute(args);
 	}
-	return (1);
-}
-
-/*-----------------------------------------------------------*/
-int lsh_execute(char **args)
-{
-	if (args[0] == NULL)
-	{
-		return (1);
-	}
-	return (lsh_launch(args));
-}
-
-/*-------------------------------------------------------------*/
-void lsh_loop(void)
-{
-	char *line;
-	char **args;
-	int status;
-	do {
-		printf("My shell > ");
-		line = read_line();
-		args = split_line(line);
-		status = lsh_execute(args);
-		free(line);
-		free(args);
-	} while (status);
-}
-
-/*---------------------------------------------------------------*/
-int main(void)
-{
-	lsh_loop();
-	return EXIT_SUCCESS;
+	free(line_copy);
+	free(line);
+	return (0);
 }
