@@ -55,6 +55,7 @@ int main(void)
 		check_term();
 		read = getline(&line, &len, stdin);
 		handle_eof(read, line);
+		
 		args = split_line(line, " \n");
 		if (!args || !args[0])
 		{
@@ -71,7 +72,7 @@ int main(void)
 				free(line);
 				func(args);
 			}
-			else if (!pathname)
+			if (!pathname)
 			{
 				execute_command(args);
 			}
