@@ -77,6 +77,33 @@ void env(char **args __attribute__ ((unused)))
 		_puts("\n");
 	}
 }
+
+/**
+ * changeDir - ...
+ * @args: ...
+ *
+ *Return: nothing
+ */
+void changeDir(char **args)
+{
+	char *str = NULL;
+	if (args[1] == NULL)
+	{
+		chdir(_get_global_value("HOME"));
+	}
+	else
+	{
+		if (chdir(args[1]) == -1)
+		{
+			perror("cd: ");
+		}
+		else
+		{
+			chdir(_get_global_value(args[1]));
+			getcwd(str, 100);
+		}
+	}
+}
 			
 /**
  * check - ...
@@ -91,8 +118,9 @@ void (*check(char **args))(char **args)
 	builtin B[] = {
 		{"exit", exi_t},
 		{"env", env},
+		{"cd", changeDir},
 		{NULL, NULL}
-	};
+	        };
 	for (i = 0; B[i].name; i++)
 	{
 		j = 0;

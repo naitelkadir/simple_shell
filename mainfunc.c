@@ -9,32 +9,32 @@
 
 char **split_line(char *line, const char *delim)
 {
-        unsigned int len = 1064;
-        unsigned int newsize;
-        unsigned int n = 0;
+	unsigned int len = 1064;
+	unsigned int newsize;
+	unsigned int n = 0;
 	char *token;
-        char **tokens = malloc(len * sizeof(char*));
-        
+	char **tokens = malloc(len * sizeof(char*));
+	
 	if (!tokens)
-        {
-                perror(_get_global_value("_"));
-                exit(EXIT_FAILURE);
-        }
-        token = strtok(line, delim);
-        while (token != NULL)
-        {
-                tokens[n] = str_dup(token);
-                n++;
-                if (n >= len)
-                {
-                        newsize = len * 2;
-                        tokens = _realloc(tokens, len * sizeof(char*), newsize * sizeof(char*));
-
-                }
-                token = strtok(NULL, delim);
-        }
-        tokens[n] = token;
-     	return (tokens);
+	{
+		perror(_get_global_value("_"));
+		exit(EXIT_FAILURE);
+	}
+	token = strtok(line, delim);
+	while(token != NULL)
+	{
+		tokens[n] = str_dup(token);
+		n++;
+		if (n >= len)
+		{
+			len = len + BUFSIZE;
+			newsize = len;
+			tokens = _realloc(tokens, len * sizeof(char*), newsize * sizeof(char*));
+		}
+		token = strtok(NULL, delim);
+	}
+	tokens[n] = token;
+	return (tokens);
 }
 
 

@@ -42,6 +42,7 @@ typedef struct builtin
 	void (*f)(char **);
 }builtin;
 
+#define BUFSIZE 1024
 extern char **environ;
 
 char *_get_global_value(const char *str);

@@ -77,6 +77,29 @@ void env(char **args __attribute__ ((unused)))
 		_puts("\n");
 	}
 }
+
+void changeDir(char **args) {
+	char *str = NULL;/*
+	const char *dir;
+	dir = getcwd(str, 100);*/
+	if (args[1] == NULL)
+	{
+		chdir(_get_global_value("HOME"));
+	}
+	/*if (args[1] == "-")
+	{
+	}*/
+	else {
+		if (chdir(args[1]) == -1) {
+			perror("./hsh: ");
+		}
+		else
+		{
+			chdir(_get_global_value(args[1]));
+			getcwd(str, BUFSIZE);
+		}
+	}
+}
 			
 /**
  * check - ...
@@ -91,6 +114,7 @@ void (*check(char **args))(char **args)
 	builtin B[] = {
 		{"exit", exi_t},
 		{"env", env},
+		{"cd", changeDir},
 		{NULL, NULL}
 	};
 	for (i = 0; B[i].name; i++)

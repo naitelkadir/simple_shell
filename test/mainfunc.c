@@ -27,7 +27,8 @@ char **split_line(char *line, const char *delim)
                 n++;
                 if (n >= len)
                 {
-                        newsize = len * 2;
+			len = len + BUFSIZE;
+                        newsize = len;
                         tokens = _realloc(tokens, len * sizeof(char*), newsize * sizeof(char*));
 
                 }

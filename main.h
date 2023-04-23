@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <limits.h>
 
+#define BUFSIZE 1024
 int _strlen(char *str);
 char *str_dup(char *s1);
 char *concate_strings(char *s1, char *s2, char *s3);
@@ -51,6 +52,7 @@ char *_which_file(char *filename, list_t *head);
 void free_list(list_t *head);
 int myAtoi(char *str);
 void exi_t(char **args);
+void changeDir(char **args);
 void execute_command(char **args);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char **split_line(char *line, const char *delim);
