@@ -39,7 +39,7 @@ char *_get_global_value(const char *str)
 	return (0);
 }
 
-/*------------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------*/
 
 /**
  * add_node_end - ...
@@ -52,7 +52,7 @@ list_t *add_node_end(list_t **head, char *str)
 {
 	list_t *tmp;
 	list_t *newnode;
-	
+
 	newnode = malloc(sizeof(list_t));
 	if (!newnode || !str)
 	{
@@ -76,7 +76,7 @@ list_t *add_node_end(list_t **head, char *str)
 	return (*head);
 }
 
-/*--------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------*/
 /**
  * link_t - ...
  * @path: ...
@@ -87,7 +87,7 @@ list_t *link_t(char *path)
 	list_t *head = '\0';
 	char *str;
 	char *cpath = str_dup(path);
-	
+
 	str = strtok(cpath, ":");
 	while (str)
 	{
@@ -97,7 +97,7 @@ list_t *link_t(char *path)
 	return (head);
 }
 
-/*--------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------*/
 /**
  * _which_file - ...
  * @filename: ...
@@ -109,8 +109,8 @@ char *_which_file(char *filename, list_t *head)
 {
 	struct stat st;
 	char *str;
-	
 	list_t *tmp = head;
+
 	while (tmp)
 	{
 		str = concate_strings(tmp->dir, "/", filename);
@@ -124,7 +124,7 @@ char *_which_file(char *filename, list_t *head)
 	return (NULL);
 }
 
-/*----------------------------------------------------------------------------------------*/
+/*----------------------------------------*/
 /**
   * free_list - Frees a linked list.
   * @head: The pointer to the first node of linked list

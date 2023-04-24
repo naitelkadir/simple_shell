@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * un_setenv - ...
+ * un_setenv - Remove an environment variable
  * @args: ...
  *
  * Return: nothing
@@ -42,13 +42,18 @@ void un_setenv(char **args)
 		}
 	}
 }
-
+/**
+ * check - ...
+ * @args: ...
+ *
+ * Return: ...
+ */
 void (*check(char **args))(char **args)
 {
 	int i, j;
 	builtin B[] = {
 		{"exit", exi_t},
-		{"env", env},
+		{"env", enver},
 		{"cd", changeDir},
 		{"setenv", set_env},
 		{"unsetenv", un_setenv},

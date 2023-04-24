@@ -3,12 +3,12 @@
 /**
  * _strlen - ...
  * @str: ...
- * 
  * Return: ...
  */
 int _strlen(char *str)
 {
 	int c = 0;
+
 	while (str[c] != '\0')
 	{
 		c++;
@@ -20,7 +20,6 @@ int _strlen(char *str)
 /**
  * str_dup - ...
  * @s1: ...
- *
  * Return: ...
  */
 char *str_dup(char *s1)
@@ -28,7 +27,7 @@ char *str_dup(char *s1)
 	int i = 0;
 	int j;
 	char *s2;
-	
+
 	if (s1 == NULL)
 	{
 		return (NULL);
@@ -56,17 +55,16 @@ char *str_dup(char *s1)
  * @s1: ...
  * @s2: ...
  * @s3: ...
- *
  * Return: ...
  */
 char *concate_strings(char *s1, char *s2, char *s3)
 {
 	char *res;
 	int len1, len2, len3, m, i;
+
 	len1 = _strlen(s1);
 	len2 = _strlen(s2);
 	len3 = _strlen(s3);
-
 	res = malloc(len1 + len2 + len3 + 1);
 	if (res == NULL)
 	{
@@ -94,14 +92,13 @@ char *concate_strings(char *s1, char *s2, char *s3)
 /*-----------------------------------------------------*/
 
 /**
- *_putchar - write the character c to stdout
- * @c: the caracter to print 
- *
+ * _putchar - write the character c to stdout
+ * @c: the caracter to print
  * Return: 1 on success and -1 on error
  */
 int _putchar(char c)
 {
-	return(write(1, &c, 1));
+	return (write(1, &c, 1));
 }
 
 /*-------------------------------------------------------*/
@@ -114,22 +111,10 @@ int _putchar(char c)
 void _puts(char *s)
 {
 	int i = 0;
-	
-	while(s[i] != '\0')
+
+	while (s[i] != '\0')
 	{
 		_putchar(s[i]);
 		i++;
 	}
 }
-/*------------------------------------------------------------*/
-	
-char *_strcpy(char *dest, const char *src)
-{
-	int i;
-	for (i = 0; src[i] != '\0'; i++)
-	{
-		dest[i] = src[i];
-	}
-	dest[i] = '\0';
-	return (dest);
-}	

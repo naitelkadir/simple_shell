@@ -58,7 +58,7 @@ void un_setenv(char **args);
 void execute_command(char **args);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char **split_line(char *line, const char *delim);
-void env(char **args __attribute__ ((unused)));
+void enver(char **args __attribute__ ((unused)));
 void (*check(char **args))(char **args);
 void free_args(char **args);
 void handle_eof(int read, char *b);

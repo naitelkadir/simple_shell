@@ -3,7 +3,7 @@
 /**
  * split_line - ...
  * @line: ...
- *
+ * @delim: ...
  * Return: ...
 */
 
@@ -13,15 +13,15 @@ char **split_line(char *line, const char *delim)
 	unsigned int newsize;
 	unsigned int n = 0;
 	char *token;
-	char **tokens = malloc(len * sizeof(char*));
-	
+	char **tokens = malloc(len * sizeof(char *));
+
 	if (!tokens)
 	{
 		perror(_get_global_value("_"));
 		exit(EXIT_FAILURE);
 	}
 	token = strtok(line, delim);
-	while(token != NULL)
+	while (token != NULL)
 	{
 		tokens[n] = str_dup(token);
 		n++;
@@ -29,7 +29,7 @@ char **split_line(char *line, const char *delim)
 		{
 			len = len + BUFSIZE;
 			newsize = len;
-			tokens = _realloc(tokens, len * sizeof(char*), newsize * sizeof(char*));
+			tokens = _realloc(tokens, len * sizeof(char *), newsize * sizeof(char *));
 		}
 		token = strtok(NULL, delim);
 	}
@@ -43,12 +43,13 @@ char **split_line(char *line, const char *delim)
  * @ptr: ...
  * @old_size: ...
  * @new_size: ...
+ * Return: ...
  */
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
 	char *res;
 	unsigned int i;
-	
+
 	if (new_size == old_size)
 	{
 		return (ptr);
@@ -77,10 +78,8 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 		res[i] = ((char *)ptr)[i];
 	}
 	free(ptr);
-	return(res);
+	return (res);
 }
-	
-
 /**
  * execute_command - ...
  * @args: array of arguments
@@ -91,7 +90,7 @@ void execute_command(char **args)
 {
 	int pid;
 	int status;
-	
+
 	if (!args || !args[0])
 	{
 		return;
@@ -119,6 +118,7 @@ void execute_command(char **args)
 void free_args(char **args)
 {
 	int i;
+
 	for (i = 0; args[i]; i++)
 	{
 		free(args[i]);

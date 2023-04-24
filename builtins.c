@@ -10,7 +10,7 @@
 int myAtoi(char *str)
 {
 	int sign = 1, base = 0, i = 0;
-	
+
 	while (str[i] == ' ')
 	{
 		i++;
@@ -25,18 +25,17 @@ int myAtoi(char *str)
 		{
 			if (sign == 1)
 			{
-				return INT_MAX;
+				return (INT_MAX);
 			}
 			else
 			{
-				return INT_MIN;
+				return (INT_MIN);
 			}
 		}
 		base = 10 * base + (str[i++] - '0');
 	}
 	return (base * sign);
 }
-	
 /**
  * exi_t - ...
  * @args: ...
@@ -46,6 +45,7 @@ int myAtoi(char *str)
 void exi_t(char **args)
 {
 	int i, n;
+
 	if (args[1] != 	NULL)
 	{
 		n = myAtoi(args[1]);
@@ -55,7 +55,7 @@ void exi_t(char **args)
 		}
 		free_args(args);
 		exit(n);
-	}
+	}		
 	for (i = 0; args[i]; i++)
 	{
 		free(args[i]);
@@ -65,12 +65,13 @@ void exi_t(char **args)
 }
 
 /**
- * env - ...
+ * enver - ...
  * @args: ...
  */
-void env(char **args __attribute__ ((unused)))
+void enver(char **args __attribute__ ((unused)))
 {
 	int i;
+
 	for (i = 0; environ[i]; i++)
 	{
 		_puts(environ[i]);
@@ -87,6 +88,7 @@ void env(char **args __attribute__ ((unused)))
 void changeDir(char **args)
 {
 	char *str = NULL;
+
 	if (args[1] == NULL)
 	{
 		chdir(_get_global_value("HOME"));
@@ -104,17 +106,15 @@ void changeDir(char **args)
 		}
 	}
 }
-			
 /**
  * set_env - ...
  * @args: ...
- * 
  * Return: ...
  */
 void set_env(char **args)
 {
 	int i, j, l;
-	
+
 	if (!args[1] || !args[2])
 	{
 		perror(_get_global_value("_"));
@@ -152,4 +152,3 @@ void set_env(char **args)
 		environ[i + 1] = '\0';
 	}
 }
-

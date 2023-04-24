@@ -3,7 +3,7 @@
 /**
  * handle_eof - ...
  * @read: ...
- * @b: ... 
+ * @b: ...
  *
  * Return: nothing
  */
@@ -23,7 +23,6 @@ void handle_eof(int read, char *b)
 
 /**
  * check_term - ...
- * 
  * Return: ...
  */
 
@@ -34,17 +33,13 @@ void check_term(void)
 		_puts("$ ");
 	}
 }
-		
 /**
  * main - main function
- *
  * Return: always return 0
  */
 int main(void)
 {
-	char *line = NULL;
-	char **args;
-	char *value, *pathname;
+	char *line = NULL, *value, *pathname, **args;
 	size_t len = 0;
 	ssize_t read = 0;
 	list_t *head = '\0';
