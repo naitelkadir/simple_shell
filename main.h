@@ -53,6 +53,8 @@ void free_list(list_t *head);
 int myAtoi(char *str);
 void exi_t(char **args);
 void changeDir(char **args);
+void set_env(char **args);
+void un_setenv(char **args);
 void execute_command(char **args);
 void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
 char **split_line(char *line, const char *delim);

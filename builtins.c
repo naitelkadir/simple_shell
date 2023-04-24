@@ -106,38 +106,50 @@ void changeDir(char **args)
 }
 			
 /**
- * check - ...
+ * set_env - ...
  * @args: ...
- *
+ * 
  * Return: ...
  */
-
-void (*check(char **args))(char **args)
+void set_env(char **args)
 {
-	int i, j;
-	builtin B[] = {
-		{"exit", exi_t},
-		{"env", env},
-		{"cd", changeDir},
-		{NULL, NULL}
-	        };
-	for (i = 0; B[i].name; i++)
+	int i, j, l;
+	
+	if (!args[1] || !args[2])
+	{
+		perror(_get_global_value("_"));
+		return;
+	}
+	for (i = 0; environ[i]; i++)
 	{
 		j = 0;
-		if (B[i].name[j] == args[0][j])
+		if (args[1][j] == environ[i][j])
 		{
-			for (j = 0; args[0][j]; j++)
+			while (args[1][j])
 			{
-				if (B[i].name[j] != args[0][j])
+				if (args[1][j] != environ[i][j])
 				{
 					break;
 				}
+				j++;
 			}
-			if (!args[0][j])
+			if (args[1][j] == '\0')
 			{
-				return (B[i].f);
+				l = 0;
+				while (args[2][l])
+				{
+					environ[i][j + 1 + l] = args[2][l];
+					l++;
+				}
+				environ[i][j + 1 + l] = '\0';
+				return;
 			}
 		}
 	}
-	return (0);
+	if (!environ[i])
+	{
+		environ[i] = concate_strings(args[1], "=", args[2]);
+		environ[i + 1] = '\0';
+	}
 }
+

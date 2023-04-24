@@ -100,7 +100,8 @@ void execute_command(char **args)
 	pid = fork();
 	if (pid == -1)
 	{
-		perror(_get_global_value("_"));
+		/*perror(_get_global_value("_"));*/
+		perror(args[0]);
 	}
 	if (pid == 0)
 	{

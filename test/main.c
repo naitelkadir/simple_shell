@@ -34,7 +34,9 @@ void check_term(void)
 		_puts("$ ");
 	}
 }
-		
+
+
+
 /**
  * main - main function
  *
@@ -55,7 +57,6 @@ int main(void)
 		check_term();
 		read = getline(&line, &len, stdin);
 		handle_eof(read, line);
-		
 		args = split_line(line, " \n");
 		if (!args || !args[0])
 		{

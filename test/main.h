@@ -19,6 +19,7 @@ char *concate_strings(char *s1, char *s2, char *s3);
 char *_strcpy(char *dest, const char *src);
 int _putchar(char c);
 void _puts(char *s);
+int read_line(char *line);
 
 /**
  * struct list_t - linked list
@@ -59,6 +60,9 @@ void env(char **args __attribute__ ((unused)));
 void (*check(char **args))(char **args);
 void free_args(char **args);
 void handle_eof(int read, char *b);
+void set_env(char **args);
+void un_setenv(char **args);
+void changeDir(char **args);
 void check_term(void);
 
 #endif
