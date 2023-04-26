@@ -9,7 +9,7 @@
  */
 void handle_eof(int read, char *b)
 {
-	(void)b;
+	/*(void)b;*/
 	if (read == -1)
 	{
 		if (isatty(STDIN_FILENO))
@@ -71,7 +71,7 @@ int main(void)
 			path_name = _which_file(args[0], head);
 			func = checkInternal(args);
 			if (func)
-			{	/*free(line);*/
+			{	free(line);
 				func(args);
 			}
 			else if (!path_name)
@@ -80,14 +80,14 @@ int main(void)
 			}
 			else if (path_name)
 			{
-				/*free(args[0]);*/
+				free(args[0]);
 				args[0] = path_name;
 				execute_command(args);
 			}
 		}
 	}
-	/*free_list(head);*/
-	/*free_args(args);*/
-	/*free(line);*/
+	free_list(head);
+	free_args(args);
+	free(line);
 	return (0);
 }
