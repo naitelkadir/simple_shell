@@ -71,10 +71,8 @@ int main(void)
 			path_name = _which_file(args[0], head);
 			func = checkInternal(args);
 			if (func)
-			{	free(line);
-				free_list(head);
+			{	
 				func(args);
-				free_args(args);
 			}
 			else if (!path_name)
 			{
