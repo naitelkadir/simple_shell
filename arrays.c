@@ -47,6 +47,7 @@ char *str_dup(char *s1)
 	}
 	s2[i] = s1[i];
 	return (s2);
+	free(s2);
 }
 
 /*------------------------------------------------------*/
@@ -87,6 +88,7 @@ char *concate_strings(char *s1, char *s2, char *s3)
 	m = m + i;
 	res[m] = '\0';
 	return (res);
+	free(res);
 }
 
 /*-----------------------------------------------------*/
