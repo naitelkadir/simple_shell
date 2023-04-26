@@ -56,7 +56,7 @@ int main(void)
 	void (*func)(char **);
 
 	/*signal(SIGINT, handle_c);*/
-	while (read != -1)
+	while (read != EOF)
 	{
 		check_term();
 		read = getline(&line, &len, stdin);
