@@ -55,7 +55,7 @@ int main(void)
 	list_t *head = '\0';
 	void (*func)(char **);
 
-	signal(SIGINT, handle_c);
+	/*signal(SIGINT, handle_c);*/
 	while (read != -1)
 	{
 		check_term();
