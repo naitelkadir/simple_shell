@@ -96,7 +96,7 @@ void execute_command(char **args)
 		return;
 	}
 	pid = fork();
-	if (pid < 0)
+	if (pid == -1)
 	{
 		perror(_get_global_value("_"));
 	}
