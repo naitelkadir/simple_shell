@@ -88,6 +88,6 @@ int main(void)
 	}
 	free_list(head);
 	free_args(args);
-	free(line);
+	/*free(line);*/
 	return (0);
 }
