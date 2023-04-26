@@ -60,7 +60,7 @@ int main(void)
 	{
 		check_term();
 		read = getline(&line, &len, stdin);
-		/*handle_eof(read, line);*/
+		handle_eof(read, line);
 		args = split_line(line, " \t\r\n\a");
 		if (!args || !args[0])
 		{	execute_command(args);
