@@ -53,7 +53,7 @@ int main(void)
 	size_t len = 0;
 	ssize_t read = 0;
 	list_t *head = '\0';
-	void (*func)(char **);
+	/*void (*func)(char **);*/
 
 	signal(SIGINT, handle_c);
 	while (read != EOF)
@@ -69,18 +69,18 @@ int main(void)
 		{	value = _get_global_value("PATH");
 			head = add_all(value);
 			path_name = _which_file(args[0], head);
-			func = checkInternal(args);
+			/*func = checkInternal(args);
 			if (func)
 			{	free(line);
 				func(args);
-			}
-			else if (!path_name)
+			}*/
+			if (!path_name)
 			{
 				execute_command(args);
 			}
 			else if (path_name)
 			{
-				/*free(args[0]);*/
+				free(args[0]);
 				args[0] = path_name;
 				execute_command(args);
 			}
