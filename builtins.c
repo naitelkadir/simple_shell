@@ -53,7 +53,7 @@ void exi_t(char **args)
 		{
 			n = 2;
 		}
-		free_args(args);
+		/*free_args(args);*/
 		exit(n);
 	}
 	for (i = 0; args[i]; i++)
