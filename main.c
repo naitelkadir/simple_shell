@@ -66,8 +66,7 @@ int main(void)
 		{	execute_command(args);
 		}
 		else
-		{
-			value = _get_global_value("PATH");
+		{	value = _get_global_value("PATH");
 			head = add_all(value);
 			path_name = _which_file(args[0], head);
 			func = checkInternal(args);
