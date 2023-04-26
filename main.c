@@ -55,7 +55,7 @@ int main(void)
 	list_t *head = '\0';
 	void (*func)(char **);
 
-	/*signal(SIGINT, handle_c);*/
+	signal(SIGINT, handle_c);
 	while (read != EOF)
 	{
 		check_term();
@@ -80,7 +80,7 @@ int main(void)
 			}
 			else if (path_name)
 			{
-				free(args[0]);
+				/*free(args[0]);*/
 				args[0] = path_name;
 				execute_command(args);
 			}
