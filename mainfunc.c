@@ -105,7 +105,6 @@ void execute_command(char **args)
 	if (pid == 0)
 	{
 		execve(args[0], args, environ);
-		
 		_puts(concate_strings(_get_global_value("_"), ": 1:", args[0]));
 		_puts(" not found\n");
 		exit(EXIT_FAILURE);
