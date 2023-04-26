@@ -86,6 +86,7 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
  *
  * Return: void
  */
+/*
 void execute_command(char **args)
 {
 	pid_t pid;
@@ -103,16 +104,46 @@ void execute_command(char **args)
 	if (pid == 0)
 	{
 		execve(args[0], args, environ);
-		/*
+		
 		_puts(concate_strings(_get_global_value("_"), ": 1:", args[0]));
-		_puts(" not found\n");*/
-		/*perror(_get_global_value("_"));*/
+		_puts(" not found\n");
+		perror(_get_global_value("_"));
 		perror(args[0]);
 		exit(EXIT_FAILURE);
 	}
 	wait(&status);
-}
+}*/
 
+void execute_command(char **args)
+{
+	pid_t pid , ppid;
+	int status;
+
+	pid = fork();
+	if (pid == 0)
+	{
+		if (execve(args[0], args, environ) == -1)
+		{
+			perror(args[0]);
+		}
+		exit(EXIT_FAILURE);
+	}
+	else if (pid < 0)
+	{
+		perror(_get_global_value("_"));
+	}
+	else if (pid > 0)
+	{
+		do {
+			ppid = waitpid(pid, &status, WUNTRACED | WCONTINUED);
+            		if (ppid == -1)
+			{
+                		perror("waitpid");
+                		exit(EXIT_FAILURE);
+            		}
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+	}
+}
 /**
  * free_args - ...
  * @args: ...
