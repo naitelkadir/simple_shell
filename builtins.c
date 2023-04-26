@@ -44,7 +44,7 @@ int myAtoi(char *str)
  */
 void exi_t(char **args)
 {
-	int i, n;
+	int n;
 
 	if (args[1] != NULL)
 	{
@@ -56,11 +56,11 @@ void exi_t(char **args)
 		/*free_args(args);*/
 		exit(n);
 	}
-	for (i = 0; args[i]; i++)
+	/*for (i = 0; args[i]; i++)
 	{
 		free(args[i]);
 	}
-	free(args);
+	free(args);*/
 	exit(0);
 }
 
