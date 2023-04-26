@@ -20,7 +20,7 @@ char *concate_strings(char *s1, char *s2, char *s3);
 char *_strcpy(char *dest, const char *src);
 int _putchar(char c);
 void _puts(char *s);
-int str_cmp(char *s1, char* s2);
+int str_cmp(char *s1, char *s2);
 
 /**
  * struct list_t - linked list
