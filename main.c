@@ -34,6 +34,17 @@ void check_term(void)
 	}
 }
 /**
+ * handle_c - ...
+ * @num: ...
+ */
+void handle_c(int num)
+{
+	if (num == SIGINT)
+	{
+		_puts("\n$ ");
+	}
+}
+/**
  * main - main function
  * Return: always return 0
  */
@@ -44,6 +55,7 @@ int main(void)
 	list_t *head = '\0';
 	void (*func)(char **);
 
+	signal(SIGINT, handle_c);
 	while (read != EOF)
 	{
 		check_term();
