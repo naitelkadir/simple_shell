@@ -30,7 +30,7 @@ void check_term(void)
 {
 	if (isatty(STDIN_FILENO))
 	{
-		_puts("$ ");
+		_puts("#cisfun$  ");
 	}
 }
 /**
@@ -41,7 +41,7 @@ void handle_c(int num)
 {
 	if (num == SIGINT)
 	{
-		_puts("\n$ ");
+		_puts("\n#cisfun$  ");
 	}
 }
 /**
@@ -56,12 +56,12 @@ int main(void)
 	void (*func)(char **);
 
 	signal(SIGINT, handle_c);
-	while (read != EOF)
+	while (read != -1)
 	{
 		check_term();
 		read = getline(&line, &len, stdin);
-		handle_eof(read, line);
-		args = split_line(line, " \n");
+		/*handle_eof(read, line);*/
+		args = split_line(line, " \t\r\n\a");
 		if (!args || !args[0])
 		{	execute_command(args);
 		}
