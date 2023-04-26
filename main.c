@@ -72,7 +72,9 @@ int main(void)
 			func = checkInternal(args);
 			if (func)
 			{	free(line);
+				free_list(head);
 				func(args);
+				free_args(args);
 			}
 			else if (!path_name)
 			{
