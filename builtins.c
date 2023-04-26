@@ -46,7 +46,7 @@ void exi_t(char **args)
 {
 	int i, n;
 
-	if (args[1] != 	NULL)
+	if (args[1] != NULL)
 	{
 		n = myAtoi(args[1]);
 		if (n <= -1)
@@ -55,7 +55,7 @@ void exi_t(char **args)
 		}
 		free_args(args);
 		exit(n);
-	}		
+	}
 	for (i = 0; args[i]; i++)
 	{
 		free(args[i]);
@@ -93,17 +93,14 @@ void changeDir(char **args)
 	{
 		chdir(_get_global_value("HOME"));
 	}
+	else if (str_cmp(args[1], "-") == 0)
+	{
+		chdir(_get_global_value("OLDPWD"));
+	}
 	else
 	{
-		if (chdir(args[1]) == -1)
-		{
-			perror("cd: ");
-		}
-		else
-		{
-			chdir(_get_global_value(args[1]));
-			getcwd(str, 100);
-		}
+		chdir(_get_global_value(args[1]));
+		getcwd(str, 0);
 	}
 }
 /**

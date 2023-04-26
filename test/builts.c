@@ -79,27 +79,22 @@ void env(char **args __attribute__ ((unused)))
 }
 
 void changeDir(char **args) {
-	char *str = NULL;/*
-	const char *dir;
-	dir = getcwd(str, 100);*/
-	if (args[1] == NULL)
-	{
-		chdir(_get_global_value("HOME"));
-	}
-	/*if (args[1] == "-")
-	{
-	}*/
-	else {
-		if (chdir(args[1]) == -1) {
-			perror("./hsh: ");
-		}
-		else
-		{
-			chdir(_get_global_value(args[1]));
-			getcwd(str, BUFSIZE);
-		}
-	}
+	char *dir = NULL;
+   
+    if (args[1] == NULL) {
+        chdir( _get_global_value("HOME"));
+    }
+    
+    else if (str_cmp(args[1], "-") == 0) {
+        chdir(_get_global_value("OLDPWD"));
+    }
+    
+    else {
+       chdir(_get_global_value(args[1]));
+	getcwd(dir, 0);
+    }
 }
+
 
 /**
  * set_env - ...

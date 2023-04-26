@@ -38,8 +38,7 @@ void check_term(void)
  * Return: always return 0
  */
 int main(void)
-{
-	char *line = NULL, *value, *pathname, **args;
+{	char *line = NULL, *value, *path_name, **args;
 	size_t len = 0;
 	ssize_t read = 0;
 	list_t *head = '\0';
@@ -52,28 +51,26 @@ int main(void)
 		handle_eof(read, line);
 		args = split_line(line, " \n");
 		if (!args || !args[0])
-		{
-			execute_command(args);
+		{	execute_command(args);
 		}
 		else
 		{
 			value = _get_global_value("PATH");
-			head = link_t(value);
-			pathname = _which_file(args[0], head);
-			func = check(args);
+			head = add_all(value);
+			path_name = _which_file(args[0], head);
+			func = checkInternal(args);
 			if (func)
-			{
-				free(line);
+			{	free(line);
 				func(args);
 			}
-			else if (!pathname)
+			else if (!path_name)
 			{
 				execute_command(args);
 			}
-			else if (pathname)
+			else if (path_name)
 			{
 				free(args[0]);
-				args[0] = pathname;
+				args[0] = path_name;
 				execute_command(args);
 			}
 		}

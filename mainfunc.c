@@ -88,7 +88,7 @@ void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
  */
 void execute_command(char **args)
 {
-	int pid;
+	pid_t pid;
 	int status;
 
 	if (!args || !args[0])
@@ -96,14 +96,14 @@ void execute_command(char **args)
 		return;
 	}
 	pid = fork();
-	if (pid == -1)
+	if (pid < 0)
 	{
 		perror(_get_global_value("_"));
 	}
 	if (pid == 0)
 	{
 		execve(args[0], args, environ);
-		perror(args[0]);
+		perror(concate_strings(_get_global_value("_"), ": 1:", args[0]));
 		exit(EXIT_FAILURE);
 	}
 	wait(&status);

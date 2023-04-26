@@ -75,3 +75,32 @@ void (*check(char **args))(char **args)
 	return (0);
 }
 
+/*
+void (*check(char **args))(char **args)
+{
+	int i;
+	char *builtin_str[100];
+        (void)builtin_str = {
+                "exit",
+                "env",
+                "cd",
+                "setenv",
+                "unsetenv"
+                };
+        void (*builtin_func[]) (char **) =
+        {&exi_t,
+         &env,
+         &changeDir,
+         &set_env,
+         &un_setenv
+        };
+	for (i = 0; i < 6; i++)
+	{
+		if (strcmp(args[0], builtin_str[i]) == 0)
+		{
+			return(*builtin_func[i])(args);
+		}
+	
+	}
+	return (0);
+}*/

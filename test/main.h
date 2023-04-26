@@ -62,6 +62,7 @@ void free_args(char **args);
 void handle_eof(int read, char *b);
 void set_env(char **args);
 void un_setenv(char **args);
+int str_cmp(char *s1, char* s2);
 void changeDir(char **args);
 void check_term(void);
 

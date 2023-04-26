@@ -59,7 +59,7 @@ list_t *add_node_end(list_t **head, char *str)
 		return (NULL);
 	}
 	newnode->dir = str;
-	newnode->p = '\0';
+	newnode->r = '\0';
 	if (!*head)
 	{
 		*head = newnode;
@@ -67,28 +67,28 @@ list_t *add_node_end(list_t **head, char *str)
 	else
 	{
 		tmp = *head;
-		while (tmp->p)
+		while (tmp->r)
 		{
-			tmp = tmp->p;
+			tmp = tmp->r;
 		}
-		tmp->p = newnode;
+		tmp->r = newnode;
 	}
 	return (*head);
 }
 
 /*----------------------------------------------------*/
 /**
- * link_t - ...
+ * add_all - ...
  * @path: ...
  * Return: ...
  */
-list_t *link_t(char *path)
+list_t *add_all(char *path)
 {
 	list_t *head = '\0';
 	char *str;
-	char *cpath = str_dup(path);
+	char *copy = str_dup(path);
 
-	str = strtok(cpath, ":");
+	str = strtok(copy, ":");
 	while (str)
 	{
 		head = add_node_end(&head, str);
@@ -100,12 +100,12 @@ list_t *link_t(char *path)
 /*------------------------------------------------------------*/
 /**
  * _which_file - ...
- * @filename: ...
+ * @file_name: ...
  * @head: ...
  *
  * Return: ...
  */
-char *_which_file(char *filename, list_t *head)
+char *_which_file(char *file_name, list_t *head)
 {
 	struct stat st;
 	char *str;
@@ -113,13 +113,13 @@ char *_which_file(char *filename, list_t *head)
 
 	while (tmp)
 	{
-		str = concate_strings(tmp->dir, "/", filename);
+		str = concate_strings(tmp->dir, "/", file_name);
 		if (stat(str, &st) == 0)
 		{
 			return (str);
 		}
 		free(str);
-		tmp = tmp->p;
+		tmp = tmp->r;
 	}
 	return (NULL);
 }
@@ -136,7 +136,7 @@ void free_list(list_t *head)
 list_t *tmp;
 while (head)
 {
-tmp = head->p;
+tmp = head->r;
 free(head->dir);
 free(head);
 head = tmp;

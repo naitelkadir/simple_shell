@@ -43,15 +43,15 @@ void un_setenv(char **args)
 	}
 }
 /**
- * check - ...
+ * checkInternal - ...
  * @args: ...
  *
  * Return: ...
  */
-void (*check(char **args))(char **args)
+void (*checkInternal(char **args))(char **args)
 {
 	int i, j;
-	builtin B[] = {
+	builtin_command B[] = {
 		{"exit", exi_t},
 		{"env", enver},
 		{"cd", changeDir},
