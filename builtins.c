@@ -73,11 +73,13 @@ void exi_t(char ** args)
 	if (args[1] != NULL)
 	{
 		for (i = 0; args[1][i]; i++)
-			if ((args[1][i] < '0' || args[1][i] > '9')
+		{	if ((args[1][i] < '0' || args[1][i] > '9')
 				&& args[1][i] != '+')
 			{
 				errno = 2;
 			}
+			free(args[i]);
+		}
 		errno = myAtoi(args[1]);
 	}
 	free_args(args);
