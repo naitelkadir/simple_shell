@@ -42,6 +42,7 @@ int myAtoi(char *str)
  *
  * Return: void
  */
+/*
 void exi_t(char **args)
 {
 	int i, n;
@@ -63,7 +64,24 @@ void exi_t(char **args)
 	free(args);
 	exit(2);
 }
+*/
+void exi_t(char ** args)
+{
+	int i;
 
+	if (args[1] != NULL)
+	{
+		for (i = 0; args[1][i]; i++)
+			if ((args[1][i] < '0' || args[1][i] > '9')
+				&& args[1][i] != '+')
+			{
+				errno = 2;
+			}
+		errno = myAtoi(args[1]);
+	}
+	free_args(args);
+	exit(errno);
+}
 
 /**
  * enver - ...

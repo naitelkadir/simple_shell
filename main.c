@@ -57,7 +57,7 @@ int main(void)
 	signal(SIGINT, handle_c);
 	while (read != EOF)
 	{
-		/*check_term();*/
+		check_term();
 		read = getline(&line, &len, stdin);
 		handle_eof(read, line);
 		args = split_line(line, " \n");
