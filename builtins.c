@@ -48,20 +48,17 @@ void exi_t(char **args)
 
 	if (args[1] != NULL)
 	{
-		n = myAtoi(args[1]);
-		if (n <= -1)
+		for (i = 0; args[1][i]; i++)
 		{
-			n = 2;
+			if ((args[1][i] < '0' || args[1][i] > '9') && args[1][i] != '+')
+			{
+				n = 2;
+			}
+			n = myAtoi(args[1]);
 		}
-		/*free_args(args);*/
-		exit(n);
 	}
-	for (i = 0; args[i]; i++)
-	{
-		free(args[i]);
-	}
-	free(args);
-	exit(0);
+	free_args(args);
+	exit(n);
 }
 
 /**
