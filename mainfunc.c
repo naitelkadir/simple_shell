@@ -195,8 +195,9 @@ void execute_command(char **args)
 		val = execve(args[0], args, environ);
 		if ( val == -1)
 		{
-			_puts(concate_strings(_get_global_value("_"), ": 1:", args[0]));
-			_puts(" not found\n");
+			/*_puts(concate_strings(_get_global_value("_"), ": 1:", args[0]));
+			_puts(" not found\n");*/
+			perror(args[0]);
 			exit(EXIT_FAILURE);
 		}
 	}

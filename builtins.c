@@ -62,9 +62,10 @@ void exi_t(char **args)
 		free(args[i]);
 	}
 	free(args);
-	exit(2);
+	exit(0);
 }
 */
+
 void exi_t(char ** args)
 {
 	int i;
@@ -104,24 +105,6 @@ void enver(char **args __attribute__ ((unused)))
  *
  *Return: nothing
  */
-void changeDir(char **args)
-{
-	char *str = NULL;
-
-	if (args[1] == NULL)
-	{
-		chdir(_get_global_value("HOME"));
-	}
-	else if (str_cmp(args[1], "-") == 0)
-	{
-		chdir(_get_global_value("OLDPWD"));
-	}
-	else
-	{
-		chdir(_get_global_value(args[1]));
-		getcwd(str, 0);
-	}
-}
 /**
  * set_env - ...
  * @args: ...
