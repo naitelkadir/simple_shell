@@ -1,144 +1,128 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- *_get_global_value - ...
- * @str: ...
- *
- * Return: ...
+ * env_get_key - gets the value of an environment variable
+ * @key: the environment variable of interest
+ * @data: struct of the program's data
+ * Return: a pointer to the value of the variable or NULL if it doesn't exist
+ */
+char *env_get_key(char *key, data_of_program *data)
+{
+	int i, key_length = 0;
+
+	/* validate the arguments */
+	if (key == NULL || data->env == NULL)
+		return (NULL);
+
+	/* obtains the leng of the variable requested */
+	key_length = str_length(key);
+
+	for (i = 0; data->env[i]; i++)
+	{/* Iterates through the environ and check for coincidence of the vame */
+		if (str_compare(key, data->env[i], key_length) &&
+		 data->env[i][key_length] == '=')
+		{/* returns the value of the key NAME=  when find it*/
+			return (data->env[i] + key_length + 1);
+		}
+	}
+	/* returns NULL if did not find it */
+	return (NULL);
+}
+
+/**
+ * env_set_key - overwrite the value of the environment variable
+ * or create it if does not exist.
+ * @key: name of the variable to set
+ * @value: new value
+ * @data: struct of the program's data
+ * Return: 1 if the parameters are NULL, 2 if there is an erroror 0 if sucess.
  */
 
-char *_get_global_value(const char *str)
+int env_set_key(char *key, char *value, data_of_program *data)
 {
-	int i, j;
-	char *value;
+	int i, key_length = 0, is_new_key = 1;
 
-	if (!str)
-	{
-		return (NULL);
+	/* validate the arguments */
+	if (key == NULL || value == NULL || data->env == NULL)
+		return (1);
+
+	/* obtains the leng of the variable requested */
+	key_length = str_length(key);
+
+	for (i = 0; data->env[i]; i++)
+	{/* Iterates through the environ and check for coincidence of the vame */
+		if (str_compare(key, data->env[i], key_length) &&
+		 data->env[i][key_length] == '=')
+		{/* If key already exists */
+			is_new_key = 0;
+			/* free the entire variable, it is new created below */
+			free(data->env[i]);
+			break;
+		}
 	}
-	for (i = 0; environ[i]; i++)
-	{
-		j = 0;
-		if (str[j] == environ[i][j])
-		{
-			while (str[j])
+	/* make an string of the form key=value */
+	data->env[i] = str_concat(str_duplicate(key), "=");
+	data->env[i] = str_concat(data->env[i], value);
+
+	if (is_new_key)
+	{/* if the variable is new, it is create at end of actual list and we need*/
+	/* to put the NULL value in the next position */
+		data->env[i + 1] = NULL;
+	}
+	return (0);
+}
+
+/**
+ * env_remove_key - remove a key from the environment
+ * @key: the key to remove
+ * @data: the sructure of the program's data
+ * Return: 1 if the key was removed, 0 if the key does not exist;
+ */
+int env_remove_key(char *key, data_of_program *data)
+{
+	int i, key_length = 0;
+
+	/* validate the arguments */
+	if (key == NULL || data->env == NULL)
+		return (0);
+
+	/* obtains the leng of the variable requested */
+	key_length = str_length(key);
+
+	for (i = 0; data->env[i]; i++)
+	{/* iterates through the environ and checks for coincidences */
+		if (str_compare(key, data->env[i], key_length) &&
+		 data->env[i][key_length] == '=')
+		{/* if key already exists, remove them */
+			free(data->env[i]);
+
+			/* move the others keys one position down */
+			i++;
+			for (; data->env[i]; i++)
 			{
-				if (str[j] != environ[i][j])
-				{
-					break;
-				}
-				j++;
+				data->env[i - 1] = data->env[i];
 			}
-			if (str[j] == '\0')
-			{
-				value = (environ[i] + j + 1);
-				return (value);
-			}
+			/* put the NULL value at the new end of the list */
+			data->env[i - 1] = NULL;
+			return (1);
 		}
 	}
 	return (0);
 }
 
-/*-----------------------------------------------*/
 
 /**
- * add_node_end - ...
- * @head: ...
- * @str: ...
- *
- * Return: ...
+ * print_environ - prints the current environ
+ * @data: struct for the program's data
+ * Return: nothing
  */
-list_t *add_node_end(list_t **head, char *str)
+void print_environ(data_of_program *data)
 {
-	list_t *tmp;
-	list_t *newnode;
+	int j;
 
-	newnode = malloc(sizeof(list_t));
-	if (!newnode || !str)
+	for (j = 0; data->env[j]; j++)
 	{
-		return (NULL);
+		_print(data->env[j]);
+		_print("\n");
 	}
-	newnode->dir = str;
-	newnode->r = '\0';
-	if (!*head)
-	{
-		*head = newnode;
-	}
-	else
-	{
-		tmp = *head;
-		while (tmp->r)
-		{
-			tmp = tmp->r;
-		}
-		tmp->r = newnode;
-	}
-	return (*head);
-}
-
-/*----------------------------------------------------*/
-/**
- * add_all - ...
- * @path: ...
- * Return: ...
- */
-list_t *add_all(char *path)
-{
-	list_t *head = '\0';
-	char *str;
-	char *copy = str_dup(path);
-
-	str = strtok(copy, ":");
-	while (str)
-	{
-		head = add_node_end(&head, str);
-		str = strtok(NULL, ":");
-	}
-	return (head);
-}
-
-/*------------------------------------------------------------*/
-/**
- * _which_file - ...
- * @file_name: ...
- * @head: ...
- *
- * Return: ...
- */
-char *_which_file(char *file_name, list_t *head)
-{
-	struct stat st;
-	char *str;
-	list_t *tmp = head;
-
-	while (tmp)
-	{
-		str = concate_strings(tmp->dir, "/", file_name);
-		if (stat(str, &st) == 0)
-		{
-			return (str);
-		}
-		free(str);
-		tmp = tmp->r;
-	}
-	return (NULL);
-}
-
-/*----------------------------------------*/
-/**
-  * free_list - Frees a linked list.
-  * @head: The pointer to the first node of linked list
-  *
-  * Return: Nothing
-  */
-void free_list(list_t *head)
-{
-list_t *tmp;
-while (head)
-{
-tmp = head->r;
-free(head->dir);
-free(head);
-head = tmp;
-}
 }
