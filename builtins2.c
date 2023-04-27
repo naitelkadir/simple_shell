@@ -54,7 +54,6 @@ void (*checkInternal(char **args))(char **args)
 	builtin_command B[] = {
 		{"exit", exi_t},
 		{"env", enver},
-		{"cd", changeDir},
 		{"setenv", set_env},
 		{"unsetenv", un_setenv},
 		{NULL, NULL}

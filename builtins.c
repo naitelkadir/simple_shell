@@ -42,18 +42,19 @@ int myAtoi(char *str)
  *
  * Return: void
  */
+/*
 void exi_t(char **args)
 {
 	int i, n;
 
-	if (args[1] != NULL)
+	if (args[1] != 	NULL)
 	{
 		n = myAtoi(args[1]);
 		if (n <= -1)
 		{
 			n = 2;
 		}
-		/*free_args(args);*/
+		free_args(args);
 		exit(n);
 	}
 	for (i = 0; args[i]; i++)
@@ -62,6 +63,25 @@ void exi_t(char **args)
 	}
 	free(args);
 	exit(0);
+}
+*/
+
+void exi_t(char ** args)
+{
+	int i;
+
+	if (args[1] != NULL)
+	{
+		for (i = 0; args[1][i]; i++)
+			if ((args[1][i] < '0' || args[1][i] > '9')
+				&& args[1][i] != '+')
+			{
+				errno = 2;
+			}
+		errno = myAtoi(args[1]);
+	}
+	free_args(args);
+	exit(errno);
 }
 
 /**
@@ -85,24 +105,6 @@ void enver(char **args __attribute__ ((unused)))
  *
  *Return: nothing
  */
-void changeDir(char **args)
-{
-	char *str = NULL;
-
-	if (args[1] == NULL)
-	{
-		chdir(_get_global_value("HOME"));
-	}
-	else if (str_cmp(args[1], "-") == 0)
-	{
-		chdir(_get_global_value("OLDPWD"));
-	}
-	else
-	{
-		chdir(_get_global_value(args[1]));
-		getcwd(str, 0);
-	}
-}
 /**
  * set_env - ...
  * @args: ...

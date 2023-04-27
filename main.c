@@ -9,7 +9,6 @@
  */
 void handle_eof(int read, char *b)
 {
-	/*(void)b;*/
 	if (read == -1)
 	{
 		if (isatty(STDIN_FILENO))
