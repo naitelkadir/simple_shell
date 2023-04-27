@@ -226,4 +226,5 @@ void free_args(char **args)
 		free(args[i]);
 	}
 	free(args);
+	args = NULL;
 }
