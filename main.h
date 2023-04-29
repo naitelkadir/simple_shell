@@ -36,7 +36,7 @@ typedef struct command
 	char **alias_t;
 } command_life;
 
-#define MSG "$"
+#define MSG "$ "
 #define BUFFER_SIZE 1024
 
 /**

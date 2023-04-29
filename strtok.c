@@ -22,9 +22,7 @@ char *str_tok(char *line, char *delim)
 		for (i = 0; delim[i] != '\0'; i++)
 		{
 			if (*s == delim[i])
-			{
-				break;
-			}
+			break;
 		}
 		if (delim[i] == '\0')
 		{
