@@ -1,41 +1,44 @@
-#include "shell.h"
+#include "main.h"
+
 /**
- * tokenize - this function separate the string using a designed delimiter
- * @data: a pointer to the program's data
- * Return: an array of the different parts of the string
+ * token_it - ...
+ * cmd: ...
+ * Return: ...
  */
-void tokenize(data_of_program *data)
+void token_it(command_life *cmd)
 {
-	char *delimiter = " \t";
-	int i, j, counter = 2, length;
-
-	length = str_length(data->input_line);
-	if (length)
+	int i, j, c = 2, len;
+	char *delim = " \t";
+	
+	len = str_len(cmd->line);
+	if (len)
 	{
-		if (data->input_line[length - 1] == '\n')
-			data->input_line[length - 1] = '\0';
-	}
-
-	for (i = 0; data->input_line[i]; i++)
-	{
-		for (j = 0; delimiter[j]; j++)
+		if (cmd->line[len - 1] == '\n')
 		{
-			if (data->input_line[i] == delimiter[j])
-				counter++;
+			cmd->line[len - 1] = '\0';
 		}
 	}
-
-	data->tokens = malloc(counter * sizeof(char *));
-	if (data->tokens == NULL)
+	for (i = 0; cmd->line[i]; i++)
 	{
-		perror(data->program_name);
+		for (j = 0; delim[j]; j++)
+		{
+			if (cmd->line[i] == delim[j])
+			{
+				c++;
+			}
+		}
+	}
+	cmd->tokens = malloc(c * sizeof(char *));
+	if (cmd->tokens == NULL)
+	{
+		perror(cmd->command_name);
 		exit(errno);
 	}
 	i = 0;
-	data->tokens[i] = str_duplicate(_strtok(data->input_line, delimiter));
-	data->command_name = str_duplicate(data->tokens[0]);
-	while (data->tokens[i++])
+	cmd->tokens[i] = str_dup(str_tok(cmd->line, delim));
+	cmd->command_name = str_dup(cmd->tokens[0]);
+	while (cmd->tokens[i++])
 	{
-		data->tokens[i] = str_duplicate(_strtok(NULL, delimiter));
+		cmd->tokens[i] = str_dup(str_tok(NULL, delim));
 	}
 }
