@@ -1,28 +1,35 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * check_builtins - ...
- * @cmd: ...
- * Return: ...
- */
-int check_builtins(command_life *cmd)
+ * builtins_list - search for match and execute the associate builtin
+ * @data: struct for the program's data
+ * Return: Returns the return of the function executed is there is a match,
+ * otherwise returns -1.
+ **/
+int builtins_list(data_of_program *data)
 {
-	int i;
-	builtin_command B[] = {
-		{"exit", exi_t},
-		{"cd", _cd},
-		{"env", enver},
-		{"setenv", builtin_setenv},
-		{"unsetenv", un_setenv},
+	int iterator;
+	builtins options[] = {
+		{"exit", builtin_exit},
+		{"help", builtin_help},
+		{"cd", builtin_cd},
+		{"alias", builtin_alias},
+		{"env", builtin_env},
+		{"setenv", builtin_set_env},
+		{"unsetenv", builtin_unset_env},
 		{NULL, NULL}
 	};
-	
-	for (i = 0; B[i].builtin != NULL; i++)
+
+/*walk through the structure*/
+	for (iterator = 0; options[iterator].builtin != NULL; iterator++)
 	{
-		if (str_cmp(B[i].builtin, cmd->command_name, 0))
+/*if there is a match between the given command and a builtin,*/
+		if (str_compare(options[iterator].builtin, data->command_name, 0))
 		{
-			return (B[i].f(cmd));
+/*execute the function, and return the return value of the function*/
+			return (options[iterator].function(data));
 		}
+/*if there is no match return -1 */
 	}
 	return (-1);
 }

@@ -1,92 +1,92 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- *_exit: ...
- * @cmd: ...
- * Return: ...
+ * builtin_env - shows the environment where the shell runs
+ * @data: struct for the program's data
+ * Return: zero if sucess, or other number if its declared in the arguments
  */
-int exi_t(command_life *cmd)
+int builtin_env(data_of_program *data)
 {
 	int i;
-	
-	if (cmd->tokens[1] != NULL)
-	{
-		for (i = 0; cmd->tokens[1][i]; i++)
-		{
-			if ((cmd->tokens[1][i] < '0' || cmd->tokens[1][i] > '9') && cmd->tokens[1][i] != '+')
-			{
-				errno = 2;
-				return (2);
-			}
-		}
-		errno = myAtoi(cmd->tokens[1]);
-	}
-	free_all(cmd);
-	exit(errno);
-}
+	char cpname[50] = {'\0'};
+	char *var_copy = NULL;
 
-/**
- * _cd - ...
- * @cmd: ...
- * Return: ...
- */
-int _cd(command_life *cmd)
-{
-	char *dir = get_value("HOME", cmd), *dir_old = NULL;
-	char old_dir[128] = {0};
-	int error_c = 0;
-	
-	if (cmd->tokens[1])
-	{
-		if (str_cmp(cmd->tokens[1], "-", 0))
-		{
-			dir_old = get_value("OLDPWD", cmd);
-			if (dir_old)
-			{
-				error_c = current_dir(cmd, dir_old);
-			}
-			_puts(get_value("PWD", cmd));
-			_puts("\n");
-			return (error_c);
-		}
-		else
-		{
-			return (current_dir(cmd, cmd->tokens[1]));
-		}
-	}
+	/* if not arguments */
+	if (data->tokens[1] == NULL)
+		print_environ(data);
 	else
 	{
-		if (!dir)
-		{
-			dir = getcwd(old_dir, 128);
+		for (i = 0; data->tokens[1][i]; i++)
+		{/* checks if exists a char = */
+			if (data->tokens[1][i] == '=')
+			{/* checks if exists a var with the same name and change its value*/
+			/* temporally */
+				var_copy = str_duplicate(env_get_key(cpname, data));
+				if (var_copy != NULL)
+					env_set_key(cpname, data->tokens[1] + i + 1, data);
+
+				/* print the environ */
+				print_environ(data);
+				if (env_get_key(cpname, data) == NULL)
+				{/* print the variable if it does not exist in the environ */
+					_print(data->tokens[1]);
+					_print("\n");
+				}
+				else
+				{/* returns the old value of the var*/
+					env_set_key(cpname, var_copy, data);
+					free(var_copy);
+				}
+				return (0);
+			}
+			cpname[i] = data->tokens[1][i];
 		}
-		return(current_dir(cmd, dir));
+		errno = 2;
+		perror(data->command_name);
+		errno = 127;
 	}
 	return (0);
 }
 
+/**
+ * builtin_set_env - ..
+ * @data: struct for the program's data
+ * Return: zero if sucess, or other number if its declared in the arguments
+ */
+int builtin_set_env(data_of_program *data)
+{
+	/* validate args */
+	if (data->tokens[1] == NULL || data->tokens[2] == NULL)
+		return (0);
+	if (data->tokens[3] != NULL)
+	{
+		errno = E2BIG;
+		perror(data->command_name);
+		return (5);
+	}
+
+	env_set_key(data->tokens[1], data->tokens[2], data);
+
+	return (0);
+}
 
 /**
- * current_dir - ...
- * @cmd: ...
- * @str: ...
+ * builtin_unset_env - ..
+ * @data: struct for the program's data'
+ * Return: ..
  */
-int current_dir(command_life *cmd, char *str)
+int builtin_unset_env(data_of_program *data)
 {
-	char old_dir[128] = {0};
-	int error_c;
-	
-	getcwd(old_dir, 128);
-	if (!str_cmp(old_dir, str, 0))
+	/* validate args */
+	if (data->tokens[1] == NULL)
+		return (0);
+	if (data->tokens[2] != NULL)
 	{
-		error_c = chdir(str);
-		if (error_c == -1)
-		{
-			errno = 2;
-			return (3);
-		}
-		set_value("PWD", str, cmd);
+		errno = E2BIG;
+		perror(data->command_name);
+		return (5);
 	}
-	set_value("OLDPWD", old_dir, cmd);
+	env_remove_key(data->tokens[1], data);
+
 	return (0);
 }

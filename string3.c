@@ -1,92 +1,70 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * num_to_string - ...
- * @num: ...
- * @s: ...
- * @base: ...
- * Return: ...
+ * _print - writes a array of chars in the standar output
+ * @string: pointer to the array of chars
+ * Return: the number of bytes writed or .
+ * On error, -1 is returned, and errno is set appropriately.
  */
-void num_to_string(long num, char *s, int base)
+int _print(char *string)
 {
-	int i = 0, c = 0;
-	long m = num;
-	char alpha[] = {"0123456789abcdef"};
-	
-	if (m == 0)
+	return (write(STDOUT_FILENO, string, str_length(string)));
+}
+/**
+ * _printe - writes a array of chars in the standar error
+ * @string: pointer to the array of chars
+ * Return: the number of bytes writed or .
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _printe(char *string)
+{
+	return (write(STDERR_FILENO, string, str_length(string)));
+}
+
+/**
+ * _print_error - writes a array of chars in the standart error
+ * @data: a pointer to the program's data'
+ * @errorcode: error code to print
+ * Return: the number of bytes writed or .
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _print_error(int errorcode, data_of_program *data)
+{
+	char n_as_string[10] = {'\0'};
+
+	long_to_string((long) data->exec_counter, n_as_string, 10);
+
+	if (errorcode == 2 || errorcode == 3)
 	{
-		s[i++] = '0';
-	}
-	if (s[0] == '-')
-	{
-		c = 1;
-	}
-	while (m)
-	{
-		if (m < 0)
-		{
-			s[i++] = alpha[-(m % base)];
-		}
+		_printe(data->program_name);
+		_printe(": ");
+		_printe(n_as_string);
+		_printe(": ");
+		_printe(data->tokens[0]);
+		if (errorcode == 2)
+			_printe(": Illegal number: ");
 		else
-		{
-			s[i++] = alpha[m % base];
-		}
-		m /= base;
+			_printe(": can't cd to ");
+		_printe(data->tokens[1]);
+		_printe("\n");
 	}
-	if (c)
+	else if (errorcode == 127)
 	{
-		s[i++] = '-';
+		_printe(data->program_name);
+		_printe(": ");
+		_printe(n_as_string);
+		_printe(": ");
+		_printe(data->command_name);
+		_printe(": not found\n");
 	}
-	s[i] = '\0';
-	str_reverse(s);
-}
-
-/**
- * myAtoi - ...
- * @s: ...
- * Return: ...
- */
-int myAtoi(char *s)
-{
-	int sign = 1;
-	unsigned int num = 0;
-	
-	while (!('0' <= *s && *s <= '9') && *s != '\0')
+	else if (errorcode == 126)
 	{
-		if (*s == '-')
-		{
-			sign *= -1;
-		}
-		if (*s == '+')
-		{
-			sign *= +1;
-		}
-		s++;
+		_printe(data->program_name);
+		_printe(": ");
+		_printe(n_as_string);
+		_printe(": ");
+		_printe(data->command_name);
+		_printe(": Permission denied\n");
 	}
-	while ('0' <= *s && *s <= '9' && *s != '\0')
-	{
-		num = (num * 10) + (*s - '0');
-		s++;
-	}
-	return (num * sign);
-}
-
-/**
- * counter - ...
- * @s: ...
- * @caract: ...
- * Return: ...
- */
-int counter(char *s, char *caract)
-{
-	int i = 0, c = 0;
-	
-	for (; s[i]; i++)
-	{
-		if (s[i] == caract[0])
-		{
-			c++;
-		}
-	}
-	return (c);
+	return (0);
 }

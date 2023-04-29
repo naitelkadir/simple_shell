@@ -1,70 +1,86 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * _puts - ...
- * @s: ...
- * Return: ...
+ * long_to_string - converts a number to a string.
+ * @number: number to be converten in an string.
+ * @string: buffer to save the number as string.
+ * @base: base to convert number
+ *
+ * Return: Nothing.
  */
-int _puts(char *s)
+void long_to_string(long number, char *string, int base)
 {
-	return (write(STDOUT_FILENO, s, str_len(s)));
-}
-/**
- * _printe - ...
- * @s: ...
- * Return: ...
- */
-int _printe(char *s)
-{
-	return (write(STDERR_FILENO, s, str_len(s)));
-}
+	int index = 0, inNegative = 0;
+	long cociente = number;
+	char letters[] = {"0123456789abcdef"};
 
-/**
- * _print_error - ...
- * @cmd: ...
- * @error_c: ...
- * Return: ...
- */
-int _print_error(int error_c, command_life *cmd)
-{
-	char str[10] = {'\0'};
-	
-	num_to_string((long) cmd->count, str, 10);
-	if (error_c == 2 || error_c == 3)
+	if (cociente == 0)
+		string[index++] = '0';
+
+	if (string[0] == '-')
+		inNegative = 1;
+
+	while (cociente)
 	{
-		_printe(cmd->name);
-		_printe(": ");
-		_printe(str);
-		_printe(": ");
-		_printe(cmd->tokens[0]);
-		if (error_c == 2)
-		{
-			_printe(":Illegal number: "); 
-		}
+		if (cociente < 0)
+			string[index++] = letters[-(cociente % base)];
 		else
-		{
-			_printe(": can't cd to ");
-		}
-		_printe(cmd->tokens[1]);
-		_printe("\n");
+			string[index++] = letters[cociente % base];
+		cociente /= base;
 	}
-	else if (error_c == 127)
+	if (inNegative)
+		string[index++] = '-';
+
+	string[index] = '\0';
+	str_reverse(string);
+}
+
+
+/**
+ * _atoi - convert a string to an integer.
+ *
+ * @s: pointer to str origen.
+ * Return: int of string or 0.
+ */
+int _atoi(char *s)
+{
+	int sign = 1;
+	unsigned int number = 0;
+	/*1- analisys sign*/
+	while (!('0' <= *s && *s <= '9') && *s != '\0')
 	{
-			_printe(cmd->name);
-			_printe(": ");
-			_printe(str);
-			_printe(": ");
-			_printe(cmd->command_name);
-			_printe(": not found\n");
+		if (*s == '-')
+			sign *= -1;
+		if (*s == '+')
+			sign *= +1;
+		s++;
 	}
-	else if (error_c == 126)
+
+	/*2 - extract the number */
+	while ('0' <= *s && *s <= '9' && *s != '\0')
 	{
-		_printe(cmd->name);
-		_printe(": ");
-		_printe(str);
-		_printe(": ");
-		_printe(cmd->command_name);
-		_printe(": Permision denied\n");
+
+		number = (number * 10) + (*s - '0');
+		s++;
 	}
-	return (0);
+	return (number * sign);
+}
+
+/**
+ * count_characters - count the coincidences of character in string.
+ *
+ * @string: pointer to str origen.
+ * @character: string with  chars to be counted
+ * Return: int of string or 0.
+ */
+int count_characters(char *string, char *character)
+{
+	int i = 0, counter = 0;
+
+	for (; string[i]; i++)
+	{
+		if (string[i] == character[0])
+			counter++;
+	}
+	return (counter);
 }

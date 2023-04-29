@@ -1,91 +1,160 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * enver - ...
- * @cmd: ...
- * Return: ...
+ * builtin_exit - exit of the program with the status
+ * @data: struct for the program's data
+ * Return: zero if sucess, or other number if its declared in the arguments
  */
-int enver(command_life *cmd)
+int builtin_exit(data_of_program *data)
 {
 	int i;
-	char cp[50] = {'\0'};
-	char *copy = NULL;
-	
-	if (cmd->tokens[1] == NULL)
+
+	if (data->tokens[1] != NULL)
+	{/*if exists arg for exit, check if is a number*/
+		for (i = 0; data->tokens[1][i]; i++)
+			if ((data->tokens[1][i] < '0' || data->tokens[1][i] > '9')
+				&& data->tokens[1][i] != '+')
+			{/*if is not a number*/
+				errno = 2;
+				return (2);
+			}
+		errno = _atoi(data->tokens[1]);
+	}
+	free_all_data(data);
+	exit(errno);
+}
+
+/**
+ * builtin_cd - change the current directory
+ * @data: struct for the program's data
+ * Return: zero if sucess, or other number if its declared in the arguments
+ */
+int builtin_cd(data_of_program *data)
+{
+	char *dir_home = env_get_key("HOME", data), *dir_old = NULL;
+	char old_dir[128] = {0};
+	int error_code = 0;
+
+	if (data->tokens[1])
 	{
-		print_environ(cmd);
+		if (str_compare(data->tokens[1], "-", 0))
+		{
+			dir_old = env_get_key("OLDPWD", data);
+			if (dir_old)
+				error_code = set_work_directory(data, dir_old);
+			_print(env_get_key("PWD", data));
+			_print("\n");
+
+			return (error_code);
+		}
+		else
+		{
+			return (set_work_directory(data, data->tokens[1]));
+		}
 	}
 	else
 	{
-		for (i = 0; cmd->tokens[1][i]; i++)
+		if (!dir_home)
+			dir_home = getcwd(old_dir, 128);
+
+		return (set_work_directory(data, dir_home));
+	}
+	return (0);
+}
+
+/**
+ * set_work_directory - set the work directory
+ * @data: struct for the program's data
+ * @new_dir: path to be set as work directory
+ * Return: zero if sucess, or other number if its declared in the arguments
+ */
+int set_work_directory(data_of_program *data, char *new_dir)
+{
+	char old_dir[128] = {0};
+	int err_code = 0;
+
+	getcwd(old_dir, 128);
+
+	if (!str_compare(old_dir, new_dir, 0))
+	{
+		err_code = chdir(new_dir);
+		if (err_code == -1)
 		{
-			if (cmd->tokens[1][i] == '=')
-			{
-				copy = str_dup(get_value(cp, cmd));
-				if (copy != NULL)
-				{
-					set_value(cp, cmd->tokens[1] + i + 1, cmd);
-				}
-				print_environ(cmd);
-				if (get_value(cp, cmd) == NULL)
-				{
-					_puts(cmd->tokens[1]);
-					_puts("\n");
-				}
-				else
-				{
-					set_value(cp, copy, cmd);
-					free(copy);
-				}
-				return (0);
-			}
-			cp[i] = cmd->tokens[1][i];
+			errno = 2;
+			return (3);
 		}
-		errno = 2;
-		perror(cmd->command_name);
-		errno = 127;
+		env_set_key("PWD", new_dir, data);
 	}
+	env_set_key("OLDPWD", old_dir, data);
 	return (0);
 }
 
 /**
- * builtin_setenv - ...
- * @cmd: ...
- * Return: ...
+ * builtin_help - shows the environment where the shell runs
+ * @data: struct for the program's data
+ * Return: zero if sucess, or other number if its declared in the arguments
  */
-int builtin_setenv(command_life *cmd)
+int builtin_help(data_of_program *data)
 {
-	if (cmd->tokens[1] == NULL || cmd->tokens[2] == NULL)
+	int i, length = 0;
+	char *mensajes[6] = {NULL};
+
+	mensajes[0] = HELP_MSG;
+
+	/* validate args */
+	if (data->tokens[1] == NULL)
 	{
-		return (0);
+		_print(mensajes[0] + 6);
+		return (1);
 	}
-	if (cmd->tokens[3] != NULL)
+	if (data->tokens[2] != NULL)
 	{
 		errno = E2BIG;
-		perror(cmd->command_name);
+		perror(data->command_name);
 		return (5);
 	}
-	set_value(cmd->tokens[1], cmd->tokens[2], cmd);
+	mensajes[1] = HELP_EXIT_MSG;
+	mensajes[2] = HELP_ENV_MSG;
+	mensajes[3] = HELP_SETENV_MSG;
+	mensajes[4] = HELP_UNSETENV_MSG;
+	mensajes[5] = HELP_CD_MSG;
+
+	for (i = 0; mensajes[i]; i++)
+	{
+		/*print the length of string */
+		length = str_length(data->tokens[1]);
+		if (str_compare(data->tokens[1], mensajes[i], length))
+		{
+			_print(mensajes[i] + length + 1);
+			return (1);
+		}
+	}
+	/*if there is no match, print error and return -1 */
+	errno = EINVAL;
+	perror(data->command_name);
 	return (0);
 }
 
 /**
- * un_setenv - ...
- * @cmd: ...
- * Return: ...
+ * builtin_alias - add, remove or show aliases
+ * @data: struct for the program's data
+ * Return: zero if sucess, or other number if its declared in the arguments
  */
-int un_setenv(command_life *cmd)
+int builtin_alias(data_of_program *data)
 {
-	if (cmd->tokens[1] == NULL)
-	{
-		return (0);
+	int i = 0;
+
+	/* if there are no arguments, print all environment */
+	if (data->tokens[1] == NULL)
+		return (print_alias(data, NULL));
+
+	while (data->tokens[++i])
+	{/* if there are arguments, set or print each env variable*/
+		if (count_characters(data->tokens[i], "="))
+			set_alias(data->tokens[i], data);
+		else
+			print_alias(data, data->tokens[i]);
 	}
-	if (cmd->tokens[2] != NULL)
-	{
-		errno = E2BIG;
-		perror(cmd->command_name);
-		return (5);
-	}
-	remove_value(cmd->tokens[1], cmd);
+
 	return (0);
 }

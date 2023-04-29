@@ -1,122 +1,112 @@
-#include "main.h"
-char *get_alias(command_life *data, char *name);
+#include "shell.h"
+
 /**
- * expand_variables - ...
- * @cmd: ...
- * Return: ...
+ * expand_variables - expand variables
+ * @data: a pointer to a struct of the program's data
+ *
+ * Return: nothing, but sets errno.
  */
-void expand_variables(command_life *cmd)
+void expand_variables(data_of_program *data)
 {
 	int i, j;
-	char line[BUFFER_SIZE] = {0}, expansion[BUFFER_SIZE] = {'\0'}, *new;
-	
-	if (cmd->line == NULL)
-	{
+	char line[BUFFER_SIZE] = {0}, expansion[BUFFER_SIZE] = {'\0'}, *temp;
+
+	if (data->input_line == NULL)
 		return;
-	}
-	add_at_end(line, cmd->line);
+	buffer_add(line, data->input_line);
 	for (i = 0; line[i]; i++)
-	{
 		if (line[i] == '#')
-		{
 			line[i--] = '\0';
-		}
 		else if (line[i] == '$' && line[i + 1] == '?')
 		{
 			line[i] = '\0';
-			num_to_string(errno, expansion, 10);
-			add_at_end(line, expansion);
-			add_at_end(line, cmd->line + i + 2);
+			long_to_string(errno, expansion, 10);
+			buffer_add(line, expansion);
+			buffer_add(line, data->input_line + i + 2);
 		}
 		else if (line[i] == '$' && line[i + 1] == '$')
 		{
 			line[i] = '\0';
-			num_to_string(getpid(), expansion, 10);
-			add_at_end(line, expansion);
-			add_at_end(line, cmd->line + i + 2);
+			long_to_string(getpid(), expansion, 10);
+			buffer_add(line, expansion);
+			buffer_add(line, data->input_line + i + 2);
 		}
 		else if (line[i] == '$' && (line[i + 1] == ' ' || line[i + 1] == '\0'))
-		{
 			continue;
-		}
 		else if (line[i] == '$')
 		{
 			for (j = 1; line[i + j] && line[i + j] != ' '; j++)
-			{
 				expansion[j - 1] = line[i + j];
-			}
-			new = get_value(expansion, cmd);
+			temp = env_get_key(expansion, data);
 			line[i] = '\0', expansion[0] = '\0';
-			add_at_end(expansion, line + i + j);
-			new ? add_at_end(line, new) : 1;
-			add_at_end(line, expansion);
+			buffer_add(expansion, line + i + j);
+			temp ? buffer_add(line, temp) : 1;
+			buffer_add(line, expansion);
 		}
-	}
-	if (!str_cmp(cmd->line, line, 0))
+	if (!str_compare(data->input_line, line, 0))
 	{
-		free(cmd->line);
-		cmd->line = str_dup(line);
+		free(data->input_line);
+		data->input_line = str_duplicate(line);
 	}
 }
 
 /**
- * expand_alias - ...
- * cmd: ...
- * Return: ...
+ * expand_alias - expans aliases
+ * @data: a pointer to a struct of the program's data
+ *
+ * Return: nothing, but sets errno.
  */
-void expand_alias(command_life *cmd)
+void expand_alias(data_of_program *data)
 {
-	int i, j, c = 0;
-	char line[BUFFER_SIZE] = {0}, expansion[BUFFER_SIZE] = {'\0'};
-	char *new;
+	int i, j, was_expanded = 0;
+	char line[BUFFER_SIZE] = {0}, expansion[BUFFER_SIZE] = {'\0'}, *temp;
 
-	if (cmd->line == NULL)
-	{
+	if (data->input_line == NULL)
 		return;
-	}
-	add_at_end(line, cmd->line);
+
+	buffer_add(line, data->input_line);
+
 	for (i = 0; line[i]; i++)
 	{
 		for (j = 0; line[i + j] && line[i + j] != ' '; j++)
-		{
 			expansion[j] = line[i + j];
-		}
 		expansion[j] = '\0';
-		new = get_alias(cmd, expansion);
-		if (new)
+
+		temp = get_alias(data, expansion);
+		if (temp)
 		{
 			expansion[0] = '\0';
-			add_at_end(expansion, line + i + j);
+			buffer_add(expansion, line + i + j);
 			line[i] = '\0';
-			add_at_end(line, new);
-			line[str_len(line)] = '\0';
-			add_at_end(line, expansion);
-			c = 1;
+			buffer_add(line, temp);
+			line[str_length(line)] = '\0';
+			buffer_add(line, expansion);
+			was_expanded = 1;
 		}
 		break;
 	}
-	if (c)
+	if (was_expanded)
 	{
-		free(cmd->line);
-		cmd->line = str_dup(line);
+		free(data->input_line);
+		data->input_line = str_duplicate(line);
 	}
 }
 
 /**
- *add_at_end - ...
- * @b: ...
- * @s: ...
- * Return: ...
+ * buffer_add - append string at end of the buffer
+ * @buffer: buffer to be filled
+ * @str_to_add: string to be copied in the buffer
+ * Return: nothing, but sets errno.
  */
-int add_at_end(char *b, char *s)
+int buffer_add(char *buffer, char *str_to_add)
 {
-	int len, i;
-	
-	len = str_len(b);
-	for (i = 0; s[i]; i++)
+	int length, i;
+
+	length = str_length(buffer);
+	for (i = 0; str_to_add[i]; i++)
 	{
-		b[len + i] = s[i];
+		buffer[length + i] = str_to_add[i];
 	}
-	b[len + i] = '\0';
-	return (len + i);
+	buffer[length + i] = '\0';
+	return (length + i);
 }

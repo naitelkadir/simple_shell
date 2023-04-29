@@ -1,31 +1,35 @@
-#include "main.h"
+#include "shell.h"
 
-char *get_alias(command_life *data, char *name);
-
-int print_alias(command_life *data, char *alias)
+/**
+ * print_alias - add, remove or show aliases
+ * @data: struct for the program's data
+ * @alias: name of the alias to be printed
+ * Return: zero if sucess, or other number if its declared in the arguments
+ */
+int print_alias(data_of_program *data, char *alias)
 {
 	int i, j, alias_length;
 	char buffer[250] = {'\0'};
 
-	if (data->alias_t)
+	if (data->alias_list)
 	{
-		alias_length = str_len(alias);
-		for (i = 0; data->alias_t[i]; i++)
+		alias_length = str_length(alias);
+		for (i = 0; data->alias_list[i]; i++)
 		{
-			if (!alias || (str_cmp(data->alias_t[i], alias, alias_length)
-				&&	data->alias_t[i][alias_length] == '='))
+			if (!alias || (str_compare(data->alias_list[i], alias, alias_length)
+				&&	data->alias_list[i][alias_length] == '='))
 			{
-				for (j = 0; data->alias_t[i][j]; j++)
+				for (j = 0; data->alias_list[i][j]; j++)
 				{
-					buffer[j] = data->alias_t[i][j];
-					if (data->alias_t[i][j] == '=')
+					buffer[j] = data->alias_list[i][j];
+					if (data->alias_list[i][j] == '=')
 						break;
 				}
 				buffer[j + 1] = '\0';
-				add_at_end(buffer, "'");
-				add_at_end(buffer, data->alias_t[i] + j + 1);
-				add_at_end(buffer, "'\n");
-				_puts(buffer);
+				buffer_add(buffer, "'");
+				buffer_add(buffer, data->alias_list[i] + j + 1);
+				buffer_add(buffer, "'\n");
+				_print(buffer);
 			}
 		}
 	}
@@ -39,22 +43,22 @@ int print_alias(command_life *data, char *alias)
  * @name: name of the requested alias.
  * Return: zero if sucess, or other number if its declared in the arguments
  */
-char *get_alias(command_life *data, char *name)
+char *get_alias(data_of_program *data, char *name)
 {
 	int i, alias_length;
 
 	/* validate the arguments */
-	if (name == NULL || data->alias_t == NULL)
+	if (name == NULL || data->alias_list == NULL)
 		return (NULL);
 
-	alias_length = str_len(name);
+	alias_length = str_length(name);
 
-	for (i = 0; data->alias_t[i]; i++)
+	for (i = 0; data->alias_list[i]; i++)
 	{/* Iterates through the environ and check for coincidence of the varname */
-		if (str_cmp(name, data->alias_t[i], alias_length) &&
-			data->alias_t[i][alias_length] == '=')
+		if (str_compare(name, data->alias_list[i], alias_length) &&
+			data->alias_list[i][alias_length] == '=')
 		{/* returns the value of the key NAME=  when find it */
-			return (data->alias_t[i] + alias_length + 1);
+			return (data->alias_list[i] + alias_length + 1);
 		}
 	}
 	/* returns NULL if did not find it */
@@ -68,13 +72,13 @@ char *get_alias(command_life *data, char *name)
  * @data: struct for the program's data
  * Return: zero if sucess, or other number if its declared in the arguments
  */
-int set_alias(char *alias_string, command_life *data)
+int set_alias(char *alias_string, data_of_program *data)
 {
 	int i, j;
 	char buffer[250] = {'0'}, *temp = NULL;
 
 	/* validate the arguments */
-	if (alias_string == NULL ||  data->alias_t == NULL)
+	if (alias_string == NULL ||  data->alias_list == NULL)
 		return (1);
 	/* Iterates alias to find = char */
 	for (i = 0; alias_string[i]; i++)
@@ -87,22 +91,22 @@ int set_alias(char *alias_string, command_life *data)
 		}
 
 	/* Iterates through the alias list and check for coincidence of the varname */
-	for (j = 0; data->alias_t[j]; j++)
-		if (str_cmp(buffer, data->alias_t[j], i) &&
-			data->alias_t[j][i] == '=')
+	for (j = 0; data->alias_list[j]; j++)
+		if (str_compare(buffer, data->alias_list[j], i) &&
+			data->alias_list[j][i] == '=')
 		{/* if the alias alredy exist */
-			free(data->alias_t[j]);
+			free(data->alias_list[j]);
 			break;
 		}
 
 	/* add the alias */
 	if (temp)
 	{/* if the alias already exist */
-		add_at_end(buffer, "=");
-		add_at_end(buffer, temp);
-		data->alias_t[j] = str_dup(buffer);
+		buffer_add(buffer, "=");
+		buffer_add(buffer, temp);
+		data->alias_list[j] = str_duplicate(buffer);
 	}
 	else /* if the alias does not exist */
-		data->alias_t[j] = str_dup(alias_string);
+		data->alias_list[j] = str_duplicate(alias_string);
 	return (0);
 }
